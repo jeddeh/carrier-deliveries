@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginTop="30dp"
+    android:stretchColumns="1" >
+
+    <TableRow>
+        <TextView
+            android:layout_marginRight="10dp"
+            android:text="Carrier Run"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etCarrierRun"
+            android:inputType="number"
+            android:maxLength="3"
+            android:textSize="22sp" >
+
+            <requestFocus />
+        </EditText>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="15dp"
+            android:text="Password"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_marginTop="15dp"
+            android:inputType="textNoSuggestions|textPassword"
+            android:maxLength="20"
+            android:textSize="22sp" />
+    </TableRow>
+
+    <Button
+        android:id="@+id/submitCarrierRun"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:onClick="clickSubmitCarrierRun"
+        android:text="Submit"
+        android:textSize="22sp" />
+
+</TableLayout>

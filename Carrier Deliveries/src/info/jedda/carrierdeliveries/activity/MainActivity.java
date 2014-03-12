@@ -1,5 +1,8 @@
 package info.jedda.carrierdeliveries.activity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import info.jedda.carrierdeliveries.model.CarrierDeliveries;
 import info.jedda.carrierdeliveries.utility.GetDeliveriesServiceConnector;
 
@@ -10,7 +13,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -26,8 +34,8 @@ public class MainActivity extends Activity {
 	private EditText etCarrierRun;
 	private EditText etPassword;
 	private ProgressDialog progress;
+	private Spinner spBranches;
 
-	private static final String STATE_CODE = "S";
 	private String carrierRun;
 
 	@Override
@@ -36,11 +44,37 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		etCarrierRun = (EditText) findViewById(R.id.etCarrierRun);
-
-		// TODO : If the application is to be used interstate, considering allowing the user to
-		// choose the state (city) code and storing in shared preferences.
-
 		etPassword = (EditText) findViewById(R.id.etPassword);
+		spBranches = (Spinner) findViewById(R.id.spCity);
+
+		// Spinner elements - may be implemented in resources if an array
+		List<String> branches = new ArrayList<String>();
+
+		branches.add("Adelaide");
+		branches.add("Brisbane");
+		branches.add("Hobart");
+		branches.add("Melbourne");
+		branches.add("Perth");
+		branches.add("Sydney");
+
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, branches);
+
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spBranches.setAdapter(adapter);
+
+		spBranches
+				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+					@Override
+					public void onItemSelected(AdapterView<?> parent,
+							View view, int position, long id) {
+						((TextView) parent.getChildAt(0)).setTextSize(22);
+					}
+
+					@Override
+					public void onNothingSelected(AdapterView<?> arg0) {
+					}
+				});
 	}
 
 	@Override
@@ -59,10 +93,14 @@ public class MainActivity extends Activity {
 		String password = etPassword.getText().toString();
 
 		try {
-			carrierRun = STATE_CODE + String.format("%03d", Integer.parseInt(runNumber));
+			carrierRun = String.valueOf(spBranches.getSelectedItem())
+					.substring(0, 1)
+					+ String.format("%03d", Integer.parseInt(runNumber));
 		} catch (NumberFormatException e) {
-			// Expected to fail when nothing entered in CarrierRun EditText by user
-			Toast.makeText(this, "Invalid Carrier Run", Toast.LENGTH_SHORT).show();
+			// Expected to fail when nothing entered in CarrierRun EditText by
+			// user
+			Toast.makeText(this, "Invalid Carrier Run", Toast.LENGTH_SHORT)
+					.show();
 			return;
 		}
 
@@ -71,14 +109,16 @@ public class MainActivity extends Activity {
 					MainActivity.this);
 			serviceConnector.getDeliveries(carrierRun);
 		} catch (Exception e) {
-			// Unable to get the deliveries for the Carrier Run from the webservice
+			// Unable to get the deliveries for the Carrier Run from the
+			// webservice
 			// TODO : Log and notify user
 		}
 	}
 
 	public void showCarrierRunAddresses() {
 		if (CarrierDeliveries.getDeliveries().size() == 0) {
-			Toast.makeText(this, "Unable to load deliveries for Run " + carrierRun,
+			Toast.makeText(this,
+					"Unable to load deliveries for Run " + carrierRun,
 					Toast.LENGTH_LONG).show();
 			etCarrierRun.setText("");
 			etPassword.setText("");

@@ -8,14 +8,30 @@
     android:stretchColumns="1" >
 
     <TableRow>
+
         <TextView
             android:layout_marginRight="10dp"
+            android:text="Branch"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spCity"
+            android:layout_width="match_parent" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
             android:text="Carrier Run"
             android:textSize="22sp"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/etCarrierRun"
+            android:layout_marginTop="10dp"
             android:inputType="number"
             android:maxLength="3"
             android:textSize="22sp" >
@@ -25,16 +41,17 @@
     </TableRow>
 
     <TableRow>
+
         <TextView
             android:layout_marginRight="10dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:text="Password"
             android:textSize="22sp"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/etPassword"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:inputType="textNoSuggestions|textPassword"
             android:maxLength="20"
             android:textSize="22sp" />

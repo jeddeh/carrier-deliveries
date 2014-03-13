@@ -16,6 +16,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -129,7 +130,7 @@ public class DeliveryItemsActivity extends Activity {
 
 			PatchDeliveryServiceConnector serviceConnector = new PatchDeliveryServiceConnector(
 					DeliveryItemsActivity.this);
-			serviceConnector.updateDelivery(deliveryId, filePath);
+			serviceConnector.updateDelivery(deliveryId, filePath, new Location(""));
 			break;
 
 		case RESULT_CANCELED:

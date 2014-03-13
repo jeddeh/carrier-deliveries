@@ -13,6 +13,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.widget.Toast;
@@ -27,15 +28,17 @@ public class PatchDeliveryServiceConnector {
 	private DeliveryItemsActivity activity;
 	private int deliveryId;
 	private String timeDelivered;
+	private Location location;
 	private String imagePath;
 
 	public PatchDeliveryServiceConnector(DeliveryItemsActivity activity) {
 		this.activity = activity;
 	}
 
-	public void updateDelivery(int deliveryId, String imagePath) {
+	public void updateDelivery(int deliveryId, String imagePath, Location location) {
 		this.deliveryId = deliveryId;
 		this.imagePath = imagePath;
+		this.location = location;
 		Format df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 		this.timeDelivered = df.format(new Date());
 
@@ -64,7 +67,10 @@ public class PatchDeliveryServiceConnector {
 
 				builder.addTextBody("deliveryId", Integer.toString(deliveryId));
 				builder.addTextBody("timeDelivered", timeDelivered);
+				builder.addTextBody("latitude", String.valueOf(location.getLatitude()));
+				builder.addTextBody("longitude", String.valueOf(location.getLongitude()));
 				builder.addTextBody("imageEncoded", imageEncoded);
+				
 				final HttpEntity httpEntity = builder.build();
 				response = RestClient.doPatch("/api/deliverycompleted/", httpEntity);
 			} catch (Exception e) {

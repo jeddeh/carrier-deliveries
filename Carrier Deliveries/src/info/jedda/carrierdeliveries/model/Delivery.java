@@ -8,19 +8,32 @@ import java.util.Date;
  */
 public class Delivery {
 
-	// Currently there are often two or more address/suburb records in Phantom for a single address.
+	// Currently there are often two or more address/suburb records in Phantom
+	// for a single address.
 	// e.g. 2 High St, Bondi / 2 High Street, Bondi Beach
-	// The driver then has to look at two delivery item lists and confirm two deliveries for a
+	// The driver then has to look at two delivery item lists and confirm two
+	// deliveries for a
 	// single address.
-	// ITSM call has been raised for this issue by Dave Heldoorn, but feedback is this is difficult
+	// ITSM call has been raised for this issue by Dave Heldoorn, but feedback
+	// is this is difficult
 	// to fix.
 
-	/** Taken from the auto-increment primary key of a Delivery table on a mock database. */
+	/**
+	 * Taken from the auto-increment primary key of a Delivery table on a mock
+	 * database.
+	 */
 	private int deliveryId;
 	private String address;
 
-	/** Only a boolean property required by the application, but a Date property may be useful. */
+	/**
+	 * Only a boolean property required by the application, but a Date property
+	 * may be useful.
+	 */
 	private Date timeDelivered;
+
+	private double latitude;
+	private double longitude;
+
 	private ArrayList<DeliveryItem> deliveryItems;
 
 	public int getDeliveryId() {
@@ -45,6 +58,22 @@ public class Delivery {
 
 	public void setTimeDelivered(Date timeDelivered) {
 		this.timeDelivered = timeDelivered;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 	public ArrayList<DeliveryItem> getDeliveryItems() {
@@ -80,7 +109,7 @@ public class Delivery {
 
 	@Override
 	public String toString() {
-		return "Delivery [deliveryId=" + deliveryId + ", address=" + address + ", timeDelivered="
-				+ timeDelivered + "]";
+		return "Delivery [deliveryId=" + deliveryId + ", address=" + address
+				+ ", timeDelivered=" + timeDelivered + "]";
 	}
 }

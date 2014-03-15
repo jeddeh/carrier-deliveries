@@ -26,7 +26,7 @@ public class PatchDeliveryServiceConnector {
 	// the delivery is confirmed. Maybe stamp this on image?
 
 	private DeliveryItemsActivity activity;
-	private int deliveryId;
+	private long deliveryId;
 	private String timeDelivered;
 	private Location location;
 	private String imagePath;
@@ -35,8 +35,8 @@ public class PatchDeliveryServiceConnector {
 		this.activity = activity;
 	}
 
-	public void updateDelivery(int deliveryId, String imagePath, Location location) {
-		this.deliveryId = deliveryId;
+	public void updateDelivery(long deliveryId2, String imagePath, Location location) {
+		this.deliveryId = deliveryId2;
 		this.imagePath = imagePath;
 		this.location = location;
 		Format df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -65,7 +65,7 @@ public class PatchDeliveryServiceConnector {
 				byte[] bs = outputStream.toByteArray();
 				String imageEncoded = Base64.encodeToString(bs, Base64.DEFAULT);
 
-				builder.addTextBody("deliveryId", Integer.toString(deliveryId));
+				builder.addTextBody("deliveryId", Long.toString(deliveryId));
 				builder.addTextBody("timeDelivered", timeDelivered);
 				builder.addTextBody("latitude", String.valueOf(location.getLatitude()));
 				builder.addTextBody("longitude", String.valueOf(location.getLongitude()));

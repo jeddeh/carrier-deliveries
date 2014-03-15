@@ -3,14 +3,10 @@ package info.jedda.carrierdeliveries.activity;
 import info.jedda.carrierdeliveries.display.DeliveryItemsAdapter;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.entity.DeliveryItem;
-import info.jedda.carrierdeliveries.utility.LocationFinder;
-import info.jedda.carrierdeliveries.utility.LocationFinder.LocationResult;
 import info.jedda.carrierdeliveries.utility.PatchDeliveryServiceConnector;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
-
 import info.jedda.carrierdeliveries.R;
 
 import android.app.Activity;
@@ -19,9 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,7 +34,7 @@ import android.widget.Toast;
  */
 public class DeliveryItemsActivity extends Activity {
 
-	private int deliveryId;
+	private long deliveryId;
 
 	private TextView tvAddressHeader;
 	private ListView lvDeliveryItems;
@@ -60,7 +54,7 @@ public class DeliveryItemsActivity extends Activity {
 			showEndActivityError();
 			return;
 		}
-		deliveryId = extras.getInt("deliveryId");
+		deliveryId = extras.getLong("deliveryId");
 
 		ArrayList<DeliveryItem> deliveryItems = CarrierDeliveries.getDelivery(
 				deliveryId).getDeliveryItems();

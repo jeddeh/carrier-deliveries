@@ -29,7 +29,7 @@ public final class CarrierDeliveries {
 		CarrierDeliveries.deliveries = deliveries;
 	}
 
-	public static Delivery getDelivery(int deliveryId) {
+	public static Delivery getDelivery(long deliveryId) {
 		for (Delivery delivery : deliveries) {
 			if (delivery.getDeliveryId() == deliveryId) {
 				return delivery;

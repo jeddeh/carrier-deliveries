@@ -45,15 +45,15 @@
         <TextView
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:text="Password"
+            android:text="Distributor Id"
             android:textSize="22sp"
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/etPassword"
+            android:id="@+id/etDistributorId"
             android:layout_marginTop="10dp"
-            android:inputType="textNoSuggestions|textPassword"
-            android:maxLength="20"
+            android:inputType="number"
+            android:maxLength="12"
             android:textSize="22sp" />
     </TableRow>
 

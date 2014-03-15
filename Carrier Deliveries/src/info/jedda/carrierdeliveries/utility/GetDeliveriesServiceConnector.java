@@ -1,7 +1,7 @@
 package info.jedda.carrierdeliveries.utility;
 
 import info.jedda.carrierdeliveries.activity.MainActivity;
-import info.jedda.carrierdeliveries.model.CarrierDeliveries;
+import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 
 import android.os.AsyncTask;
 
@@ -12,14 +12,16 @@ import android.os.AsyncTask;
 public class GetDeliveriesServiceConnector {
 
 	private String carrierRun;
+	private String distributorId;
 	private MainActivity activity;
 
 	public GetDeliveriesServiceConnector(MainActivity activity) {
 		this.activity = activity;
 	}
 
-	public void getDeliveries(String carrierRun) {
+	public void getDeliveries(String carrierRun, String distributorId) {
 		this.carrierRun = carrierRun;
+		this.distributorId = distributorId;
 		new LongRunningGetIO().execute();
 	}
 
@@ -34,6 +36,7 @@ public class GetDeliveriesServiceConnector {
 
 			try {
 				response = RestClient.doGet("/api/delivery/" + carrierRun);
+				// TODO : response = RestClient.doGet("/api/delivery?carrierRun=" + carrierRun + "&distributorId= + distributiorId);
 			} catch (Exception e) {
 				// Unable to get deliveries for the carrier run
 				// TODO : Log and notify user.

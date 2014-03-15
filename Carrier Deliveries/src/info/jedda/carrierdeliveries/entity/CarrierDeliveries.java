@@ -1,4 +1,4 @@
-package info.jedda.carrierdeliveries.model;
+package info.jedda.carrierdeliveries.entity;
 
 import java.util.ArrayList;
 

@@ -1,8 +1,8 @@
 package info.jedda.carrierdeliveries.utility;
 
-import info.jedda.carrierdeliveries.model.CarrierDeliveries;
-import info.jedda.carrierdeliveries.model.Delivery;
-import info.jedda.carrierdeliveries.model.DeliveryItem;
+import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
+import info.jedda.carrierdeliveries.entity.Delivery;
+import info.jedda.carrierdeliveries.entity.DeliveryItem;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,13 +32,7 @@ public class JsonParser {
 
 			Delivery delivery = new Delivery();
 			delivery.setDeliveryId(jsonDelivery.getInt("DeliveryId"));
-
-			if (jsonDelivery.isNull("TimeDelivered")) {
-				delivery.setTimeDelivered(null);
-			} else {
-				delivery.setTimeDelivered(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale
-						.getDefault()).parse(jsonDelivery.getString("TimeDelivered")));
-			}
+			delivery.setIsDelivered(jsonDelivery.getBoolean("IsDelivered"));
 
 			String address = jsonDelivery.getString("Address");
 			delivery.setAddress(address);

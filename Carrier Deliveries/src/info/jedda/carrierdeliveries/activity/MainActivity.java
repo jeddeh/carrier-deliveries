@@ -3,7 +3,7 @@ package info.jedda.carrierdeliveries.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import info.jedda.carrierdeliveries.model.CarrierDeliveries;
+import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.utility.GetDeliveriesServiceConnector;
 
 import info.jedda.carrierdeliveries.R;
@@ -32,7 +32,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 	private EditText etCarrierRun;
-	private EditText etPassword;
+	private EditText etDistributorId;
 	private ProgressDialog progress;
 	private Spinner spBranches;
 
@@ -44,12 +44,10 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		etCarrierRun = (EditText) findViewById(R.id.etCarrierRun);
-		etPassword = (EditText) findViewById(R.id.etPassword);
+		etDistributorId = (EditText) findViewById(R.id.etDistributorId);
 		spBranches = (Spinner) findViewById(R.id.spCity);
 
-		// Spinner elements - may be implemented in resources if an array
 		List<String> branches = new ArrayList<String>();
-
 		branches.add("Adelaide");
 		branches.add("Brisbane");
 		branches.add("Hobart");
@@ -81,16 +79,14 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		etCarrierRun.setText("");
-		etPassword.setText("");
+		etDistributorId.setText("");
 		etCarrierRun.requestFocus();
 	}
 
 	public void clickSubmitCarrierRun(View v) {
 
 		String runNumber = etCarrierRun.getText().toString();
-
-		// TODO : Password functionality not implemented.
-		String password = etPassword.getText().toString();
+		String distributorId = etDistributorId.getText().toString();
 
 		try {
 			carrierRun = String.valueOf(spBranches.getSelectedItem())
@@ -107,7 +103,7 @@ public class MainActivity extends Activity {
 		try {
 			GetDeliveriesServiceConnector serviceConnector = new GetDeliveriesServiceConnector(
 					MainActivity.this);
-			serviceConnector.getDeliveries(carrierRun);
+			serviceConnector.getDeliveries(carrierRun, distributorId);
 		} catch (Exception e) {
 			// Unable to get the deliveries for the Carrier Run from the
 			// webservice
@@ -121,7 +117,7 @@ public class MainActivity extends Activity {
 					"Unable to load deliveries for Run " + carrierRun,
 					Toast.LENGTH_LONG).show();
 			etCarrierRun.setText("");
-			etPassword.setText("");
+			etDistributorId.setText("");
 			etCarrierRun.requestFocus();
 			return;
 		}

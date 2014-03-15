@@ -1,6 +1,6 @@
 package info.jedda.carrierdeliveries.display;
 
-import info.jedda.carrierdeliveries.model.DeliveryItem;
+import info.jedda.carrierdeliveries.entity.DeliveryItem;
 
 import java.util.ArrayList;
 

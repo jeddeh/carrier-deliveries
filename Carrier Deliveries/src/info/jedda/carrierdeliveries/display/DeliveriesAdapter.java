@@ -1,7 +1,7 @@
 package info.jedda.carrierdeliveries.display;
 
-import info.jedda.carrierdeliveries.model.CarrierDeliveries;
-import info.jedda.carrierdeliveries.model.Delivery;
+import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
+import info.jedda.carrierdeliveries.entity.Delivery;
 
 import java.util.ArrayList;
 
@@ -57,7 +57,7 @@ public class DeliveriesAdapter extends BaseAdapter {
 
     	// Grey out the delivery on the ListView if completed.
         holder.tvAddress.setText(deliveries.get(position).getAddress());
-        if (deliveries.get(position).getTimeDelivered() == null) {
+        if (deliveries.get(position).getIsDelivered() == false) {
         	convertView.setBackgroundResource(R.drawable.selector_enabled);
         } else {
         	convertView.setBackgroundResource(R.drawable.selector_disabled);

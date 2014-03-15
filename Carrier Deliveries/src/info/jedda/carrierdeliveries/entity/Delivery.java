@@ -1,4 +1,4 @@
-package info.jedda.carrierdeliveries.model;
+package info.jedda.carrierdeliveries.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,21 +22,16 @@ public class Delivery {
 	 * Taken from the auto-increment primary key of a Delivery table on a mock
 	 * database.
 	 */
-	private int deliveryId;
+	private long deliveryId;
 	private String address;
-
-	/**
-	 * Only a boolean property required by the application, but a Date property
-	 * may be useful.
-	 */
-	private Date timeDelivered;
+	private boolean isDelivered;
 
 	private double latitude;
 	private double longitude;
 
 	private ArrayList<DeliveryItem> deliveryItems;
 
-	public int getDeliveryId() {
+	public long getDeliveryId() {
 		return deliveryId;
 	}
 
@@ -52,12 +47,12 @@ public class Delivery {
 		this.address = address;
 	}
 
-	public Date getTimeDelivered() {
-		return timeDelivered;
+	public boolean getIsDelivered() {
+		return isDelivered;
 	}
 
-	public void setTimeDelivered(Date timeDelivered) {
-		this.timeDelivered = timeDelivered;
+	public void setIsDelivered(boolean isDelivered) {
+		this.isDelivered = isDelivered;
 	}
 
 	public double getLatitude() {
@@ -89,7 +84,7 @@ public class Delivery {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + deliveryId;
+		result = (int) (prime * result + deliveryId);
 		return result;
 	}
 
@@ -110,6 +105,6 @@ public class Delivery {
 	@Override
 	public String toString() {
 		return "Delivery [deliveryId=" + deliveryId + ", address=" + address
-				+ ", timeDelivered=" + timeDelivered + "]";
+				+ ", isDelivered=" + isDelivered + "]";
 	}
 }

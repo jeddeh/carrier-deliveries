@@ -1,7 +1,7 @@
 package info.jedda.carrierdeliveries.activity;
 
 import info.jedda.carrierdeliveries.display.DeliveriesAdapter;
-import info.jedda.carrierdeliveries.model.CarrierDeliveries;
+import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 
 import info.jedda.carrierdeliveries.R;
 

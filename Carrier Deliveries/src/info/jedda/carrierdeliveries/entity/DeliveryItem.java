@@ -1,4 +1,4 @@
-package info.jedda.carrierdeliveries.model;
+package info.jedda.carrierdeliveries.entity;
 
 /**
  * Holds data related to a single catalogue version.

@@ -1,7 +1,7 @@
 package info.jedda.carrierdeliveries.utility;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
 
 import info.jedda.carrierdeliveries.activity.MainActivity;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
@@ -38,8 +38,11 @@ public class GetDeliveriesServiceConnector {
 			String response = null;
 
 			try {
-				response = RestClient.doGet("/api/delivery/" + carrierRun);
-				// TODO : response = RestClient.doGet("/api/delivery?carrierRun=" + carrierRun + "&distributorId= + distributiorId);
+				Header acceptHeader = new BasicHeader("Accept", "application/json");
+				Header authorizationHeader = RestClient.getAuthorizationHeader(carrierRun, distributorId);
+				
+			    Header[] headers = {acceptHeader, authorizationHeader};
+				response = RestClient.doGet("/api/delivery/" + carrierRun, headers);
 			} catch (Exception e) {
 				// Unable to get deliveries for the carrier run
 				// TODO : Log and notify user.

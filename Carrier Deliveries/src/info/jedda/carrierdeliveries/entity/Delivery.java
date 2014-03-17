@@ -8,20 +8,12 @@ import java.util.Date;
  */
 public class Delivery {
 
-	// Currently there are often two or more address/suburb records in Phantom
-	// for a single address.
-	// e.g. 2 High St, Bondi / 2 High Street, Bondi Beach
-	// The driver then has to look at two delivery item lists and confirm two
-	// deliveries for a
-	// single address.
-	// ITSM call has been raised for this issue by Dave Heldoorn, but feedback
-	// is this is difficult
-	// to fix.
+	// As of 2014-03-18, there are often two or more address/suburb records in Phantom
+	// for a single address. e.g. 2 High St, Bondi / 2 High Street, Bondi Beach.
+	// The driver then has to look at two delivery item lists and confirm two deliveries for a
+	// single address. ITSM call has been raised for this issue by Dave Heldoorn, but feedback is
+	// this is difficult to fix.
 
-	/**
-	 * Taken from the auto-increment primary key of a Delivery table on a mock
-	 * database.
-	 */
 	private long deliveryId;
 	private String address;
 	private boolean isDelivered;
@@ -104,7 +96,7 @@ public class Delivery {
 
 	@Override
 	public String toString() {
-		return "Delivery [deliveryId=" + deliveryId + ", address=" + address
-				+ ", isDelivered=" + isDelivered + "]";
+		return "Delivery [deliveryId=" + deliveryId + ", address=" + address + ", isDelivered="
+				+ isDelivered + "]";
 	}
 }

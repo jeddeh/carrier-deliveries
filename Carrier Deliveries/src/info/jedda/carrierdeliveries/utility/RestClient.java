@@ -11,7 +11,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.entity.mime.Header;
+import org.apache.http.entity.mime.MinimalField;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.params.HttpConnectionParams;
 
 /**
@@ -27,8 +30,16 @@ public class RestClient {
 			URISyntaxException {
 
 		HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000);
-		HttpGet httpget = new HttpGet(SERVER_URL + url);
-		HttpResponse response = httpClient.execute(httpget);
+		HttpGet httpGet = new HttpGet(SERVER_URL + url);
+		
+		BasicHeader header = new BasicHeader("Authorization", "xxx");
+		httpGet.addHeader((org.apache.http.Header) header);
+		httpGet.addHeader("Accept", "application/json");
+		//httpGet.addHeader("Authorization","xxx");
+		
+		// httpGet.setHeaders(headers);
+		
+		HttpResponse response = httpClient.execute(httpGet);
 
 		switch (response.getStatusLine().getStatusCode()) {
 		case 200:

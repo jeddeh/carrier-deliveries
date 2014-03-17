@@ -1,5 +1,8 @@
 package info.jedda.carrierdeliveries.utility;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.utils.URIBuilder;
+
 import info.jedda.carrierdeliveries.activity.MainActivity;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 

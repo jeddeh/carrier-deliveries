@@ -22,8 +22,6 @@ import android.widget.Toast;
  * Class responsible for uploading to the web service the data and image for a completed Delivery.
  */
 public class PatchDeliveryServiceConnector {
-	// TODO : Considering having a location property set to the location of the phone when
-	// the delivery is confirmed. Maybe stamp this on image?
 
 	private DeliveryItemsActivity activity;
 	private long deliveryId;
@@ -35,8 +33,8 @@ public class PatchDeliveryServiceConnector {
 		this.activity = activity;
 	}
 
-	public void updateDelivery(long deliveryId2, String imagePath, Location location) {
-		this.deliveryId = deliveryId2;
+	public void updateDelivery(long deliveryId, String imagePath, Location location) {
+		this.deliveryId = deliveryId;
 		this.imagePath = imagePath;
 		this.location = location;
 		Format df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());

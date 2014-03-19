@@ -70,6 +70,7 @@ public class GetDeliveriesServiceConnector {
 			}
 
 			CarrierDeliveries.setCarrierRun(carrierRun);
+			CarrierDeliveries.setDistributorId(distributorId);
 			try {
 				JsonParser.createCarrierDeliveries(response);
 				activity.showCarrierRunAddresses();

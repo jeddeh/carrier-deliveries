@@ -1,6 +1,8 @@
 package info.jedda.carrierdeliveries.utility;
 
-import info.jedda.carrierdeliveries.activity.DeliveryItemsActivity;
+import info.jedda.carrierdeliveries.R;
+import info.jedda.carrierdeliveries.activity.DeliveryItemsTestActivity;
+import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -9,11 +11,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.widget.Toast;
@@ -23,20 +26,25 @@ import android.widget.Toast;
  */
 public class PatchDeliveryServiceConnector {
 
-	private DeliveryItemsActivity activity;
-	private long deliveryId;
+	// TODO : Testing only
+	private DeliveryItemsTestActivity activity;
 	private String timeDelivered;
-	private Location location;
+	private double latitude;
+	private double longitude;
 	private String imagePath;
+	private long deliveryId;
 
-	public PatchDeliveryServiceConnector(DeliveryItemsActivity activity) {
+	// TODO : Testing only
+	public PatchDeliveryServiceConnector(DeliveryItemsTestActivity activity) {
 		this.activity = activity;
 	}
 
-	public void updateDelivery(long deliveryId, String imagePath, Location location) {
+	public void updateDelivery(long deliveryId, String imagePath, double latitude, double longitude) {
 		this.deliveryId = deliveryId;
 		this.imagePath = imagePath;
-		this.location = location;
+		this.latitude = latitude;
+		this.longitude = longitude;
+
 		Format df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 		this.timeDelivered = df.format(new Date());
 
@@ -57,32 +65,46 @@ public class PatchDeliveryServiceConnector {
 			try {
 				MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
-				Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-				bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-				byte[] bs = outputStream.toByteArray();
-				String imageEncoded = Base64.encodeToString(bs, Base64.DEFAULT);
+				// Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+				Bitmap bitmap = BitmapFactory.decodeFile("/drawable/ic_launcher.png");
+				// ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				// bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+				// byte[] bs = outputStream.toByteArray();
+				// String imageEncoded = Base64.encodeToString(bs, Base64.DEFAULT);
+				String imageEncoded = "imageTest";
 
+				// TODO : delete the below for Phantom use
 				builder.addTextBody("deliveryId", Long.toString(deliveryId));
 				builder.addTextBody("timeDelivered", timeDelivered);
-				builder.addTextBody("latitude", String.valueOf(location.getLatitude()));
-				builder.addTextBody("longitude", String.valueOf(location.getLongitude()));
+				// builder.addTextBody("latitude", String.valueOf(location.getLatitude()));
+				// builder.addTextBody("longitude", String.valueOf(location.getLongitude()));
+				builder.addTextBody("latitude", String.valueOf(latitude));
+				builder.addTextBody("longitude", String.valueOf(longitude));
 				builder.addTextBody("imageEncoded", imageEncoded);
-				
-				final HttpEntity httpEntity = builder.build();
-				response = RestClient.doPatch("/api/deliverycompleted/", httpEntity);
+
+				HttpEntity httpEntity = builder.build();
+
+				Header authorizationHeader = RestClient.getAuthorizationHeader(
+						CarrierDeliveries.getCarrierRun(), CarrierDeliveries.getDistributorId());
+
+				Header[] headers = { authorizationHeader };
+
+				// TODO : change to the below for Phantom use
+				// response = RestClient.doPatch("/api/deliverycompleted/" + deliveryId, httpEntity,
+				// headers);
+				response = RestClient.doPatch("/api/deliverycompleted/", httpEntity, headers);
 			} catch (Exception e) {
 				// Delivery upload failed...
+				Toast.makeText(activity, "Upload failed.", Toast.LENGTH_LONG).show();
+				File file = new File(imagePath);
+				file.delete();
+				
+				
 				// TODO : Store the delivery details (on external storage?) and retry the upload
 				// later (start service?). Better ways??
 
-				// TODO : Considering means to upload delivery details and image via USB when the
-				// driver returns to the warehouse if no Internet connection. (Or maybe not...)
-
 				// TODO : The Delivery should be Patched before another attempt is made to Get the
 				// deliveries for the carrier run from the webservice
-
-				// TODO : Log and notify user.
 			} finally {
 				activity.endProgressDialog();
 			}
@@ -97,8 +119,13 @@ public class PatchDeliveryServiceConnector {
 
 		@Override
 		protected void onPostExecute(String response) {
-			// Delivery successfully uploaded to the webservice and updated
-			Toast.makeText(activity, "Delivery updated.", Toast.LENGTH_LONG).show();
+			// Check if Delivery was successfully uploaded to the web service and updated
+			if (response != null) {
+				Toast.makeText(activity, "Delivery updated.", Toast.LENGTH_LONG).show();
+			} else {
+				Toast.makeText(activity, "Upload failed.", Toast.LENGTH_LONG).show();
+			}
+
 			File file = new File(imagePath);
 			file.delete();
 		}

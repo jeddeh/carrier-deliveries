@@ -38,6 +38,13 @@
             android:name="info.jedda.carrierdeliveries.activity.DeliveryItemsActivity"
             android:label="Delivery Items" >
         </activity>
+        
+        
+        
+         <activity
+            android:name="info.jedda.carrierdeliveries.activity.DeliveryItemsTestActivity"
+            android:label="Delivery Items" >
+        </activity>
     </application>
 
 </manifest>

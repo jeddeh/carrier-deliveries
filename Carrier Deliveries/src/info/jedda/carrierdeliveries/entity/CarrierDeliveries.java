@@ -8,6 +8,7 @@ import java.util.ArrayList;
  */
 public final class CarrierDeliveries {
 	private static String carrierRun;
+	private static String distributorId;
 	private static ArrayList<Delivery> deliveries;
 
 	private CarrierDeliveries() {
@@ -19,6 +20,14 @@ public final class CarrierDeliveries {
 
 	public static void setCarrierRun(String carrierRun) {
 		CarrierDeliveries.carrierRun = carrierRun;
+	}
+
+	public static String getDistributorId() {
+		return distributorId;
+	}
+
+	public static void setDistributorId(String distributorId) {
+		CarrierDeliveries.distributorId = distributorId;
 	}
 
 	public static ArrayList<Delivery> getDeliveries() {

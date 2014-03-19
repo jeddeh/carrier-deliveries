@@ -17,6 +17,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.params.HttpConnectionParams;
 
+import android.util.Base64;
+
 /**
  * REST Client for Apache HTTPClient API. Adapted from {@link dyutiman.wordpress.com
  * /2011/04/13/rest-template-using-apache-httpclient/}. The HttpClient used in this class is not
@@ -27,14 +29,7 @@ public class RestClient {
 	private static final HttpClient httpClient = new DefaultHttpClient();
 
 	public static Header getAuthorizationHeader(String user, String password) {
-		String unencodedAuthorization = user + ":" + password;
-
-		// Base64.encode is only supported by SDK Version 8 and above
-		byte[] byteData = android.util.Base64.encode(unencodedAuthorization.getBytes(),
-				android.util.Base64.DEFAULT);
-
-		String encodedAuthorization = new String(byteData);
-		return new BasicHeader("Authorization", "Basic " + encodedAuthorization);
+		return new BasicHeader("Authorization", "Basic " + Base64.encodeToString("user:password".getBytes(), Base64.NO_WRAP));
 	}
 
 	public static String doGet(final String url, final Header[] headers) throws HttpException,
@@ -58,13 +53,18 @@ public class RestClient {
 		}
 	}
 
-	public static String doPatch(final String url, final HttpEntity entity)
+	public static String doPatch(final String url, final HttpEntity entity, Header[] headers)
 			throws URISyntaxException, HttpException, IOException {
 
 		final HttpClient httpClient = new DefaultHttpClient();
 		HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000);
 
 		HttpPatch httpPatch = new HttpPatch(SERVER_URL + url);
+		
+		for (Header header : headers) {
+			httpPatch.addHeader(header);
+		}
+		
 		httpPatch.setEntity(entity);
 		HttpResponse response = httpClient.execute(httpPatch);
 

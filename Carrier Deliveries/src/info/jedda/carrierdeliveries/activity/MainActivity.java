@@ -61,18 +61,16 @@ public class MainActivity extends Activity {
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spBranches.setAdapter(adapter);
 
-		spBranches
-				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-					@Override
-					public void onItemSelected(AdapterView<?> parent,
-							View view, int position, long id) {
-						((TextView) parent.getChildAt(0)).setTextSize(22);
-					}
+		spBranches.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				((TextView) parent.getChildAt(0)).setTextSize(22);
+			}
 
-					@Override
-					public void onNothingSelected(AdapterView<?> arg0) {
-					}
-				});
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
+		});
 	}
 
 	@Override
@@ -89,14 +87,12 @@ public class MainActivity extends Activity {
 		String distributorId = etDistributorId.getText().toString();
 
 		try {
-			carrierRun = String.valueOf(spBranches.getSelectedItem())
-					.substring(0, 1)
+			carrierRun = String.valueOf(spBranches.getSelectedItem()).substring(0, 1)
 					+ String.format("%03d", Integer.parseInt(runNumber));
 		} catch (NumberFormatException e) {
 			// Expected to fail when nothing entered in CarrierRun EditText by
 			// user
-			Toast.makeText(this, "Invalid Carrier Run", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(this, "Invalid Carrier Run", Toast.LENGTH_SHORT).show();
 			return;
 		}
 
@@ -113,8 +109,7 @@ public class MainActivity extends Activity {
 
 	public void showCarrierRunAddresses() {
 		if (CarrierDeliveries.getDeliveries().size() == 0) {
-			Toast.makeText(this,
-					"Unable to load deliveries for Run " + carrierRun,
+			Toast.makeText(this, "Unable to load deliveries for Run " + carrierRun,
 					Toast.LENGTH_LONG).show();
 			etCarrierRun.setText("");
 			etDistributorId.setText("");

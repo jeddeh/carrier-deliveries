@@ -29,7 +29,8 @@ public class RestClient {
 	private static final HttpClient httpClient = new DefaultHttpClient();
 
 	public static Header getAuthorizationHeader(String user, String password) {
-		return new BasicHeader("Authorization", "Basic " + Base64.encodeToString("user:password".getBytes(), Base64.NO_WRAP));
+		return new BasicHeader("Authorization", "Basic "
+				+ Base64.encodeToString((user + ":" + password).getBytes(), Base64.NO_WRAP));
 	}
 
 	public static String doGet(final String url, final Header[] headers) throws HttpException,
@@ -37,7 +38,7 @@ public class RestClient {
 
 		HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000);
 		HttpGet httpGet = new HttpGet(SERVER_URL + url);
-		
+
 		for (Header header : headers) {
 			httpGet.addHeader(header);
 		}
@@ -60,11 +61,11 @@ public class RestClient {
 		HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000);
 
 		HttpPatch httpPatch = new HttpPatch(SERVER_URL + url);
-		
+
 		for (Header header : headers) {
 			httpPatch.addHeader(header);
 		}
-		
+
 		httpPatch.setEntity(entity);
 		HttpResponse response = httpClient.execute(httpPatch);
 

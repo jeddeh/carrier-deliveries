@@ -39,7 +39,7 @@ public class DeliveriesActivity extends Activity {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-				Intent intent = new Intent(DeliveriesActivity.this, DeliveryItemsTestActivity.class);
+				Intent intent = new Intent(DeliveriesActivity.this, DeliveryItemsActivity.class);
 				intent.putExtra("deliveryId", CarrierDeliveries.getDeliveries().get(position)
 						.getDeliveryId());
 

@@ -3,10 +3,12 @@ package info.jedda.carrierdeliveries.activity;
 import info.jedda.carrierdeliveries.display.DeliveryItemsAdapter;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.entity.DeliveryItem;
+import info.jedda.carrierdeliveries.utility.LocationFinder;
 import info.jedda.carrierdeliveries.utility.PatchDeliveryServiceConnector;
 
 import java.io.File;
 import java.util.ArrayList;
+
 import info.jedda.carrierdeliveries.R;
 
 import android.app.Activity;
@@ -14,6 +16,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,6 +39,7 @@ public class DeliveryItemsActivity extends Activity {
 	private TextView tvAddressHeader;
 	private ListView lvDeliveryItems;
 	private Button btnDeliveryComplete;
+	private LocationFinder locationFinder;
 	private ProgressDialog progress;
 
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -45,6 +49,7 @@ public class DeliveryItemsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_deliveryitems);
 
+		// Get the Delivery Items
 		Bundle extras = getIntent().getExtras();
 
 		if (extras == null) {
@@ -73,6 +78,10 @@ public class DeliveryItemsActivity extends Activity {
 		}
 
 		lvDeliveryItems.setAdapter(new DeliveryItemsAdapter(this, deliveryItems));
+
+		// Start GPS tracking
+		locationFinder = new LocationFinder(DeliveryItemsActivity.this);
+		locationFinder.start();
 	}
 
 	public void clickDeliveryComplete(View v) {
@@ -110,6 +119,9 @@ public class DeliveryItemsActivity extends Activity {
 			return;
 		}
 
+		Location location = locationFinder.getLocation();
+		boolean gpsSettingsEnabled = locationFinder.isEnabled();
+
 		// TODO : Had problems with the phone orientation changing after
 		// returning from the camera
 		// intent...
@@ -134,19 +146,13 @@ public class DeliveryItemsActivity extends Activity {
 			// TODO : Patch delivery without image, log and advise user
 		}
 
-		// TODO : Considering generating the time delivered by the server...
 		// TODO : (What happens when no Internet connection?)
-		// TODO : (What happens if images need to be timestamped?)
 		CarrierDeliveries.getDelivery(deliveryId).setIsDelivered(true);
-
-		// Get Location
-		double latitude = 0;
-		double longitude = 0;
 
 		// Patch Delivery
 		PatchDeliveryServiceConnector serviceConnector = new PatchDeliveryServiceConnector(
 				DeliveryItemsActivity.this);
-		serviceConnector.updateDelivery(deliveryId, filePath, latitude, longitude);
+		serviceConnector.updateDelivery(deliveryId, filePath, gpsSettingsEnabled, location);
 	}
 
 	@Override
@@ -183,10 +189,12 @@ public class DeliveryItemsActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
+		locationFinder.stop();
 
 		if (progress != null) {
 			progress.dismiss();
 		}
+
 		super.onDestroy();
 	}
 

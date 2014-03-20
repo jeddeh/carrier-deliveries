@@ -5,6 +5,7 @@ import java.util.List;
 
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.utility.GetDeliveriesServiceConnector;
+import info.jedda.carrierdeliveries.utility.LocationFinder;
 
 import info.jedda.carrierdeliveries.R;
 
@@ -14,7 +15,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -71,6 +71,12 @@ public class MainActivity extends Activity {
 			public void onNothingSelected(AdapterView<?> arg0) {
 			}
 		});
+		
+		LocationFinder locationFinder = new LocationFinder(this);
+		if (!locationFinder.isEnabled()) {
+			locationFinder.showSettingsAlert();
+		}
+		
 	}
 
 	@Override

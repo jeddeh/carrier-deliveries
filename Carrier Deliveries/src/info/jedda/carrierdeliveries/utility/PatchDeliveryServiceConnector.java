@@ -6,7 +6,6 @@ import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,12 +14,10 @@ import java.util.Locale;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Base64;
 import android.widget.Toast;
 
@@ -29,11 +26,10 @@ import android.widget.Toast;
  */
 public class PatchDeliveryServiceConnector {
 
-	// TODO : Testing only
 	private DeliveryItemsActivity activity;
 	private String timeDelivered;
-	private double latitude;
-	private double longitude;
+	private String latitudeText;
+	private String longitudeText;
 	private String imagePath;
 	private long deliveryId;
 
@@ -41,11 +37,20 @@ public class PatchDeliveryServiceConnector {
 		this.activity = activity;
 	}
 
-	public void updateDelivery(long deliveryId, String imagePath, double latitude, double longitude) {
+	public void updateDelivery(long deliveryId, String imagePath, boolean gpsSettingsEnabled, Location location) {
 		this.deliveryId = deliveryId;
 		this.imagePath = imagePath;
-		this.latitude = latitude;
-		this.longitude = longitude;
+		
+		if (!gpsSettingsEnabled) {
+			latitudeText = "disabled";
+			longitudeText = "disabled";
+		} else if (location == null) {
+			latitudeText = "";
+			longitudeText = "";
+		} else {
+			latitudeText = String.valueOf(location.getLatitude());
+			longitudeText = String.valueOf(location.getLatitude());
+		}
 
 		Format df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 		this.timeDelivered = df.format(new Date());
@@ -101,8 +106,8 @@ public class PatchDeliveryServiceConnector {
 				builder.addTextBody("deliveryId", Long.toString(deliveryId));
 
 				builder.addTextBody("timeDelivered", timeDelivered);
-				builder.addTextBody("latitude", String.valueOf(latitude));
-				builder.addTextBody("longitude", String.valueOf(longitude));
+				builder.addTextBody("latitude", latitudeText);
+				builder.addTextBody("longitude", longitudeText);
 				builder.addTextBody("image", image);
 
 				// builder.addPart("image", new FileBody(file));
@@ -121,9 +126,7 @@ public class PatchDeliveryServiceConnector {
 				response = RestClient.doPatch("/api/deliverycompleted/", httpEntity, headers);
 			} catch (Exception e) {
 				// Delivery upload failed...
-				Toast.makeText(activity, "Upload failed.", Toast.LENGTH_LONG).show();
-				File file = new File(imagePath);
-				file.delete();
+				response = null;
 
 				// TODO : Store the delivery details (on external storage?) and retry the upload
 				// later (start service?). Better ways??

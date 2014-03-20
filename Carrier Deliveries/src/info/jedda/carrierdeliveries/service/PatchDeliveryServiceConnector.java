@@ -1,8 +1,9 @@
-package info.jedda.carrierdeliveries.utility;
+package info.jedda.carrierdeliveries.service;
 
 import info.jedda.carrierdeliveries.R;
 import info.jedda.carrierdeliveries.activity.DeliveryItemsActivity;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
+import info.jedda.carrierdeliveries.utility.RestClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

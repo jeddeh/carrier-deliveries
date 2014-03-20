@@ -3,8 +3,8 @@ package info.jedda.carrierdeliveries.activity;
 import info.jedda.carrierdeliveries.display.DeliveryItemsAdapter;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.entity.DeliveryItem;
+import info.jedda.carrierdeliveries.service.PatchDeliveryServiceConnector;
 import info.jedda.carrierdeliveries.utility.LocationFinder;
-import info.jedda.carrierdeliveries.utility.PatchDeliveryServiceConnector;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -121,6 +121,7 @@ public class DeliveryItemsActivity extends Activity {
 
 		Location location = locationFinder.getLocation();
 		boolean gpsSettingsEnabled = locationFinder.isEnabled();
+		locationFinder.stop();
 
 		// TODO : Had problems with the phone orientation changing after
 		// returning from the camera

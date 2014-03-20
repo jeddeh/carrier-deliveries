@@ -16,7 +16,7 @@
             android:textStyle="bold" />
 
         <Spinner
-            android:id="@+id/spCity"
+            android:id="@+id/spBranches"
             android:layout_width="match_parent" />
     </TableRow>
 

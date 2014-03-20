@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
-import info.jedda.carrierdeliveries.utility.GetDeliveriesServiceConnector;
+import info.jedda.carrierdeliveries.service.GetDeliveriesServiceConnector;
 import info.jedda.carrierdeliveries.utility.LocationFinder;
 
 import info.jedda.carrierdeliveries.R;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,6 +39,7 @@ public class MainActivity extends Activity {
 	private Spinner spBranches;
 
 	private String carrierRun;
+	private SharedPreferences preferences;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,7 @@ public class MainActivity extends Activity {
 
 		etCarrierRun = (EditText) findViewById(R.id.etCarrierRun);
 		etDistributorId = (EditText) findViewById(R.id.etDistributorId);
-		spBranches = (Spinner) findViewById(R.id.spCity);
+		spBranches = (Spinner) findViewById(R.id.spBranches);
 
 		List<String> branches = new ArrayList<String>();
 		branches.add("Adelaide");
@@ -61,6 +64,12 @@ public class MainActivity extends Activity {
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spBranches.setAdapter(adapter);
 
+		preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		String defaultBranch = preferences.getString("defaultBranch", "");
+		if (branches.contains(defaultBranch)) {
+			spBranches.setSelection(branches.indexOf(defaultBranch));
+		}
+
 		spBranches.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -71,12 +80,12 @@ public class MainActivity extends Activity {
 			public void onNothingSelected(AdapterView<?> arg0) {
 			}
 		});
-		
+
 		LocationFinder locationFinder = new LocationFinder(this);
 		if (!locationFinder.isEnabled()) {
 			locationFinder.showSettingsAlert();
 		}
-		
+
 	}
 
 	@Override
@@ -93,11 +102,16 @@ public class MainActivity extends Activity {
 		String distributorId = etDistributorId.getText().toString();
 
 		try {
-			carrierRun = String.valueOf(spBranches.getSelectedItem()).substring(0, 1)
+			String branch = String.valueOf(spBranches.getSelectedItem());
+
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putString("defaultBranch", branch);
+			editor.commit();
+
+			carrierRun = branch.substring(0, 1)
 					+ String.format("%03d", Integer.parseInt(runNumber));
 		} catch (NumberFormatException e) {
-			// Expected to fail when nothing entered in CarrierRun EditText by
-			// user
+			// Expected to fail when nothing entered in CarrierRun EditText by user
 			Toast.makeText(this, "Invalid Carrier Run", Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -107,8 +121,7 @@ public class MainActivity extends Activity {
 					MainActivity.this);
 			serviceConnector.getDeliveries(carrierRun, distributorId);
 		} catch (Exception e) {
-			// Unable to get the deliveries for the Carrier Run from the
-			// webservice
+			// Unable to get the deliveries for the Carrier Run from the webservice
 			// TODO : Log and notify user
 		}
 	}

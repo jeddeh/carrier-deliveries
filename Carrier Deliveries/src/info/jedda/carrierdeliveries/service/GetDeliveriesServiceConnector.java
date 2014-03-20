@@ -1,10 +1,12 @@
-package info.jedda.carrierdeliveries.utility;
+package info.jedda.carrierdeliveries.service;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
 import info.jedda.carrierdeliveries.activity.MainActivity;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
+import info.jedda.carrierdeliveries.utility.JsonParser;
+import info.jedda.carrierdeliveries.utility.RestClient;
 
 import android.os.AsyncTask;
 

@@ -24,11 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * The application will create a new top-level folder on the phone called DeliveryPhotos containing saved images.
- * A bug exists which will also cause images to be saved in the phone's default gallery location.
- */
-
-/**
  * The login activity.
  */
 public class MainActivity extends Activity {
@@ -40,6 +35,7 @@ public class MainActivity extends Activity {
 
 	private String carrierRun;
 	private SharedPreferences preferences;
+	private LocationFinder locationFinder;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +76,6 @@ public class MainActivity extends Activity {
 			public void onNothingSelected(AdapterView<?> arg0) {
 			}
 		});
-
-		LocationFinder locationFinder = new LocationFinder(this);
-		if (!locationFinder.isEnabled()) {
-			locationFinder.showSettingsAlert();
-		}
-
 	}
 
 	@Override
@@ -94,9 +84,17 @@ public class MainActivity extends Activity {
 		etCarrierRun.setText("");
 		etDistributorId.setText("");
 		etCarrierRun.requestFocus();
+
+		locationFinder = new LocationFinder(this);
+		if (!locationFinder.isEnabled()) {
+			locationFinder.showSettingsAlert();
+		}
 	}
 
 	public void clickSubmitCarrierRun(View v) {
+		CarrierDeliveries.setCarrierRun("");
+		CarrierDeliveries.setDistributorId("");
+		CarrierDeliveries.setDeliveries(null);
 
 		String runNumber = etCarrierRun.getText().toString();
 		String distributorId = etDistributorId.getText().toString();
@@ -116,13 +114,18 @@ public class MainActivity extends Activity {
 			return;
 		}
 
+		if (distributorId.isEmpty()) {
+			Toast.makeText(this, "Invalid Distributor Id", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
 		try {
 			GetDeliveriesServiceConnector serviceConnector = new GetDeliveriesServiceConnector(
 					MainActivity.this);
 			serviceConnector.getDeliveries(carrierRun, distributorId);
 		} catch (Exception e) {
-			// Unable to get the deliveries for the Carrier Run from the webservice
-			// TODO : Log and notify user
+			Toast.makeText(this, "Unable to load deliveries for Run " + carrierRun,
+					Toast.LENGTH_LONG).show();
 		}
 	}
 

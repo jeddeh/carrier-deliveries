@@ -33,7 +33,7 @@ public class RestClient {
 				+ Base64.encodeToString((user + ":" + password).getBytes(), Base64.NO_WRAP));
 	}
 
-	public static String doGet(final String url, final Header[] headers) throws HttpException,
+	public synchronized static String doGet(final String url, final Header[] headers) throws HttpException,
 			IOException, URISyntaxException {
 
 		HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), 10000);
@@ -54,7 +54,7 @@ public class RestClient {
 		}
 	}
 
-	public static String doPatch(final String url, final HttpEntity entity, Header[] headers)
+	public synchronized static String doPatch(final String url, final HttpEntity entity, Header[] headers)
 			throws URISyntaxException, HttpException, IOException {
 
 		final HttpClient httpClient = new DefaultHttpClient();
@@ -77,7 +77,7 @@ public class RestClient {
 		}
 	}
 
-	private static String read(InputStream in) throws IOException {
+	private synchronized static String read(InputStream in) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		BufferedReader r = new BufferedReader(new InputStreamReader(in), 1000);
 		for (String line = r.readLine(); line != null; line = r.readLine()) {

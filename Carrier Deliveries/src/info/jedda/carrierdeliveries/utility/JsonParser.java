@@ -5,10 +5,7 @@ import info.jedda.carrierdeliveries.entity.Delivery;
 import info.jedda.carrierdeliveries.entity.DeliveryItem;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

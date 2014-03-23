@@ -80,17 +80,17 @@ public class DeliveryItemsActivity extends Activity {
 		lvDeliveryItems.setAdapter(new DeliveryItemsAdapter(this, deliveryItems));
 
 		// Start GPS tracking
-		locationFinder = new LocationFinder(DeliveryItemsActivity.this);
+		if (locationFinder == null) {
+			locationFinder = new LocationFinder(DeliveryItemsActivity.this);
+		}
 		locationFinder.start();
 	}
 
 	public void clickDeliveryComplete(View v) {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-		// 250kB?? per image * 1500 images per distribution * 2 distributions
-		// per week
-		// ( * ? states?? ) = estimated 750MB per week on server (?)
-
+		// TODO : Try Catch Blocks
+		
 		// TODO : What happens if external storage is full on mobile?
 
 		// TODO : Application is currently saving in both the '/DeliveryPhotos/'
@@ -123,11 +123,6 @@ public class DeliveryItemsActivity extends Activity {
 		boolean gpsSettingsEnabled = locationFinder.isEnabled();
 		locationFinder.stop();
 
-		// TODO : Had problems with the phone orientation changing after
-		// returning from the camera
-		// intent...
-		// setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-
 		// TODO : Correct the orientation of the image itself
 
 		String filePath = null;
@@ -143,8 +138,12 @@ public class DeliveryItemsActivity extends Activity {
 			return;
 
 		default:
-			// Image capture failed
-			// TODO : Patch delivery without image, log and advise user
+			// Image capture failed - Patch delivery without image
+			CarrierDeliveries.getDelivery(deliveryId).setIsDelivered(true);
+
+			PatchDeliveryServiceConnector serviceConnector = new PatchDeliveryServiceConnector(
+					DeliveryItemsActivity.this);
+			serviceConnector.updateDelivery(deliveryId, null, gpsSettingsEnabled, location);
 		}
 
 		// TODO : (What happens when no Internet connection?)
@@ -153,7 +152,7 @@ public class DeliveryItemsActivity extends Activity {
 		// Patch Delivery
 		PatchDeliveryServiceConnector serviceConnector = new PatchDeliveryServiceConnector(
 				DeliveryItemsActivity.this);
-		serviceConnector.updateDelivery(deliveryId, filePath, gpsSettingsEnabled, location);
+		serviceConnector.updateDelivery(deliveryId, null, gpsSettingsEnabled, location);
 	}
 
 	@Override
@@ -169,11 +168,6 @@ public class DeliveryItemsActivity extends Activity {
 	}
 
 	public void showProgressDialog() {
-		// TODO : ProgressDialog is Cancelable.
-		// This will potentially cause multithreading problems in
-		// RestClient.java with concurrent
-		// webservice requests.
-
 		progress = new ProgressDialog(this);
 		progress.setTitle("Updating delivery...");
 		progress.setMessage("Please wait.");

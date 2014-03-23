@@ -29,7 +29,7 @@ public class DeliveriesActivity extends Activity {
 		setTitle("Deliveries for " + CarrierDeliveries.getCarrierRun());
 		lvDeliveries = (ListView) findViewById(R.id.lvDeliveries);
 
-		// Set a transparent background for the ListView so the ListView rows can be greyed out
+		// Set a transparent background for the ListView so the ListView rows can be grayed out
 		// when the delivery is completed.
 		lvDeliveries.setBackgroundColor(0);
 		deliveriesAdapter = new DeliveriesAdapter(this);

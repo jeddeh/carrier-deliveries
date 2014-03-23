@@ -1,7 +1,6 @@
 package info.jedda.carrierdeliveries.entity;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Holds data for a single delivery of DeliveryItems (catalogues) by a driver.

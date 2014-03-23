@@ -1,6 +1,5 @@
 package info.jedda.carrierdeliveries.service;
 
-import info.jedda.carrierdeliveries.R;
 import info.jedda.carrierdeliveries.activity.DeliveryItemsActivity;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.utility.RestClient;
@@ -21,7 +20,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.widget.Toast;
-
 /**
  * Class responsible for uploading to the web service the data and image for a completed Delivery.
  */
@@ -38,10 +36,11 @@ public class PatchDeliveryServiceConnector {
 		this.activity = activity;
 	}
 
-	public void updateDelivery(long deliveryId, String imagePath, boolean gpsSettingsEnabled, Location location) {
+	public void updateDelivery(long deliveryId, String imagePath, boolean gpsSettingsEnabled,
+			Location location) {
 		this.deliveryId = deliveryId;
 		this.imagePath = imagePath;
-		
+
 		if (!gpsSettingsEnabled) {
 			latitudeText = "disabled";
 			longitudeText = "disabled";
@@ -50,7 +49,7 @@ public class PatchDeliveryServiceConnector {
 			longitudeText = "";
 		} else {
 			latitudeText = String.valueOf(location.getLatitude());
-			longitudeText = String.valueOf(location.getLatitude());
+			longitudeText = String.valueOf(location.getLongitude());
 		}
 
 		Format df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -68,26 +67,27 @@ public class PatchDeliveryServiceConnector {
 		protected String doInBackground(Void... params) {
 			String response = null;
 
-			// TODO : Had server-side problems, so used a base 64 string - needs fix
 			// TODO : Image size / compression may need adjusting?
 			try {
 				MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
 				// Convert image to a base 64 string
-				// TODO : change path to imagePath
+				String image;
 
-				// Test Code
-				Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(),
-						R.drawable.duck);
-
-				// Bitmap bitmap = BitmapFactory.decodeFile(path);
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-				bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-				byte[] bs = outputStream.toByteArray();
-				String image = Base64.encodeToString(bs, Base64.DEFAULT);
-
+				if (imagePath == null) {
+					image = "";
+				} else {
+					try {
+						Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+						ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+						bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+						byte[] bs = outputStream.toByteArray();
+						image = Base64.encodeToString(bs, Base64.DEFAULT);
+					} catch (Exception e) {
+						image = "";
+					}
+				}
 				// // Test code - get image example with binary encoding
-				// // TODO : delete test image in drawable folder
 				// Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(),
 				// R.drawable.duck);
 				// String path = Environment.getExternalStorageDirectory().toString();
@@ -128,12 +128,6 @@ public class PatchDeliveryServiceConnector {
 			} catch (Exception e) {
 				// Delivery upload failed...
 				response = null;
-
-				// TODO : Store the delivery details (on external storage?) and retry the upload
-				// later (start service?). Better ways??
-
-				// TODO : The Delivery should be Patched before another attempt is made to Get the
-				// deliveries for the carrier run from the webservice
 			} finally {
 				activity.endProgressDialog();
 			}

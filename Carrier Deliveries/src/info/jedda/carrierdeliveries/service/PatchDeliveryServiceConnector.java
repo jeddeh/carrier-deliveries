@@ -149,8 +149,8 @@ public class PatchDeliveryServiceConnector {
 				Toast.makeText(activity, "Upload failed.", Toast.LENGTH_LONG).show();
 			}
 
-			File file = new File(imagePath);
-			file.delete();
+			// File file = new File(imagePath);
+			// file.delete();
 		}
 	}
 }

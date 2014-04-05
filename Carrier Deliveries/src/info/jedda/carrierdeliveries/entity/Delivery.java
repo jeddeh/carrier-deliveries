@@ -38,11 +38,11 @@ public class Delivery {
 		this.address = address;
 	}
 
-	public boolean getIsDelivered() {
+	public boolean isDelivered() {
 		return isDelivered;
 	}
 
-	public void setIsDelivered(boolean isDelivered) {
+	public void setDelivered(boolean isDelivered) {
 		this.isDelivered = isDelivered;
 	}
 

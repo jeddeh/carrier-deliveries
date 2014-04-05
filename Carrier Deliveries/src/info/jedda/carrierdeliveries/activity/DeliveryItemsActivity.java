@@ -23,10 +23,12 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 /**
  * Class responsible for displaying the job names and quantities (DeliveryItems) for a single
@@ -71,26 +73,38 @@ public class DeliveryItemsActivity extends Activity {
 		btnDeliveryComplete = (Button) findViewById(R.id.btnDeliveryComplete);
 		tvAddressHeader.setText(CarrierDeliveries.getDelivery(deliveryId).getAddress());
 
-		if (CarrierDeliveries.getDelivery(deliveryId).getIsDelivered() == true) {
+		if (CarrierDeliveries.getDelivery(deliveryId).isDelivered() == true) {
 			btnDeliveryComplete.setEnabled(false);
 			btnDeliveryComplete.setBackgroundColor(Color.parseColor("#ff33b5e5"));
 			btnDeliveryComplete.setTextColor(Color.parseColor("#323232"));
 		}
 
 		lvDeliveryItems.setAdapter(new DeliveryItemsAdapter(this, deliveryItems));
+		
+		lvDeliveryItems.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+				boolean isSelected = CarrierDeliveries.getDelivery(deliveryId).getDeliveryItems().get(position).isSelected();
+				CarrierDeliveries.getDelivery(deliveryId).getDeliveryItems().get(position).setSelected(!isSelected);
+				lvDeliveryItems.invalidateViews();
+			}
+		});
 
 		// Start GPS tracking
-		if (locationFinder == null) {
-			locationFinder = new LocationFinder(DeliveryItemsActivity.this);
+		if (CarrierDeliveries.getDelivery(deliveryId).isDelivered() == false) {
+			if (locationFinder == null) {
+				locationFinder = new LocationFinder(DeliveryItemsActivity.this);
+			}
+			locationFinder.start();
 		}
-		locationFinder.start();
 	}
 
 	public void clickDeliveryComplete(View v) {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
 		// TODO : Try Catch Blocks
-		
+
 		// TODO : What happens if external storage is full on mobile?
 
 		// TODO : Application is currently saving in both the '/DeliveryPhotos/'
@@ -139,7 +153,7 @@ public class DeliveryItemsActivity extends Activity {
 
 		default:
 			// Image capture failed - Patch delivery without image
-			CarrierDeliveries.getDelivery(deliveryId).setIsDelivered(true);
+			CarrierDeliveries.getDelivery(deliveryId).setDelivered(true);
 
 			PatchDeliveryServiceConnector serviceConnector = new PatchDeliveryServiceConnector(
 					DeliveryItemsActivity.this);
@@ -147,19 +161,19 @@ public class DeliveryItemsActivity extends Activity {
 		}
 
 		// TODO : (What happens when no Internet connection?)
-		CarrierDeliveries.getDelivery(deliveryId).setIsDelivered(true);
+		CarrierDeliveries.getDelivery(deliveryId).setDelivered(true);
 
 		// Patch Delivery
 		PatchDeliveryServiceConnector serviceConnector = new PatchDeliveryServiceConnector(
 				DeliveryItemsActivity.this);
-		serviceConnector.updateDelivery(deliveryId, null, gpsSettingsEnabled, location);
+		serviceConnector.updateDelivery(deliveryId, filePath, gpsSettingsEnabled, location);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 
-		if (CarrierDeliveries.getDelivery(deliveryId).getIsDelivered() == true) {
+		if (CarrierDeliveries.getDelivery(deliveryId).isDelivered() == true) {
 			// Delivery has been completed, disable Button btnDeliveryComplete
 			btnDeliveryComplete.setEnabled(false);
 			btnDeliveryComplete.setBackgroundColor(Color.parseColor("#ff33b5e5"));
@@ -184,7 +198,9 @@ public class DeliveryItemsActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		locationFinder.stop();
+		if (locationFinder != null) {
+			locationFinder.stop();
+		}
 
 		if (progress != null) {
 			progress.dismiss();

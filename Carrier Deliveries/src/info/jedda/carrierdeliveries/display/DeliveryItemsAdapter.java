@@ -83,6 +83,13 @@ public class DeliveryItemsAdapter extends BaseAdapter {
 
 		holder.tvQuantity.setText(Integer.toString(deliveryItems.get(position).getQuantity())
 				+ " Total");
+		
+		// Grey out the delivery on the ListView if completed.
+        if (deliveryItems.get(position).isSelected() == false) {
+        	convertView.setBackgroundResource(R.drawable.selector_enabled);
+        } else {
+        	convertView.setBackgroundResource(R.drawable.selector_disabled);
+        }
 
 		return convertView;
 	}

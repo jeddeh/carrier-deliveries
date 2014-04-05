@@ -29,7 +29,7 @@ public class JsonParser {
 
 			Delivery delivery = new Delivery();
 			delivery.setDeliveryId(jsonDelivery.getInt("DeliveryId"));
-			delivery.setIsDelivered(jsonDelivery.getBoolean("IsDelivered"));
+			delivery.setDelivered(jsonDelivery.getBoolean("IsDelivered"));
 
 			String address = jsonDelivery.getString("Address");
 			delivery.setAddress(address);
@@ -45,6 +45,7 @@ public class JsonParser {
 				deliveryItem.setJobName(jsonDeliveryItem.getString("JobName"));
 				deliveryItem.setBundleSize(jsonDeliveryItem.getInt("BundleSize"));
 				deliveryItem.setQuantity(jsonDeliveryItem.getInt("Quantity"));
+				deliveryItem.setSelected(false);
 
 				deliveryItems.add(deliveryItem);
 			}

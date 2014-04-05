@@ -9,6 +9,7 @@ public class DeliveryItem {
 	private String jobName;
 	private int quantity;
 	private int bundleSize;
+	private boolean isSelected;
 
 	public String getJobId() {
 		return jobId;
@@ -40,6 +41,14 @@ public class DeliveryItem {
 
 	public void setBundleSize(int bundleSize) {
 		this.bundleSize = bundleSize;
+	}
+
+	public boolean isSelected() {
+		return isSelected;
+	}
+
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
 	}
 
 	// When a bundle size has not yet been entered into Phantom for a job,

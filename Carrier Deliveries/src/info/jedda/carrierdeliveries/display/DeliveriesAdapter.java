@@ -57,7 +57,7 @@ public class DeliveriesAdapter extends BaseAdapter {
 
     	// Grey out the delivery on the ListView if completed.
         holder.tvAddress.setText(deliveries.get(position).getAddress());
-        if (deliveries.get(position).getIsDelivered() == false) {
+        if (deliveries.get(position).isDelivered() == false) {
         	convertView.setBackgroundResource(R.drawable.selector_enabled);
         } else {
         	convertView.setBackgroundResource(R.drawable.selector_disabled);

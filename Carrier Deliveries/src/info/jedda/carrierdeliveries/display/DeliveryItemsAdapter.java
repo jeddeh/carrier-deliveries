@@ -86,9 +86,9 @@ public class DeliveryItemsAdapter extends BaseAdapter {
 		
 		// Grey out the delivery on the ListView if completed.
         if (deliveryItems.get(position).isSelected() == false) {
-        	convertView.setBackgroundResource(R.drawable.selector_enabled);
+        	convertView.setBackgroundResource(R.drawable.selector_unselected);
         } else {
-        	convertView.setBackgroundResource(R.drawable.selector_disabled);
+        	convertView.setBackgroundResource(R.drawable.selector_selected);
         }
 
 		return convertView;

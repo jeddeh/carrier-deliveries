@@ -6,6 +6,7 @@ import info.jedda.carrierdeliveries.utility.RestClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,9 +18,11 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.widget.Toast;
+
 /**
  * Class responsible for uploading to the web service the data and image for a completed Delivery.
  */
@@ -31,6 +34,8 @@ public class PatchDeliveryServiceConnector {
 	private String longitudeText;
 	private String imagePath;
 	private long deliveryId;
+
+	private static final int IMAGE_LONGEST_SIDE_LENGTH = 200;
 
 	public PatchDeliveryServiceConnector(DeliveryItemsActivity activity) {
 		this.activity = activity;
@@ -67,7 +72,6 @@ public class PatchDeliveryServiceConnector {
 		protected String doInBackground(Void... params) {
 			String response = null;
 
-			// TODO : Image size / compression may need adjusting?
 			try {
 				MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
@@ -79,29 +83,48 @@ public class PatchDeliveryServiceConnector {
 				} else {
 					try {
 						Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-						ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-						bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-						byte[] bs = outputStream.toByteArray();
+						ExifInterface oldExif = new ExifInterface(imagePath);
+
+						// Resize and compress image
+						int initialWidth = bitmap.getWidth();
+						int initialHeight = bitmap.getHeight();
+
+						int width = initialWidth > initialHeight ? IMAGE_LONGEST_SIDE_LENGTH
+								: IMAGE_LONGEST_SIDE_LENGTH * initialWidth / initialHeight;
+
+						int height = initialHeight > initialWidth ? IMAGE_LONGEST_SIDE_LENGTH
+								: IMAGE_LONGEST_SIDE_LENGTH * initialHeight / initialWidth;
+
+						bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+
+						// Re-save new image
+						File file = new File(imagePath);
+						FileOutputStream fileOutputStream = new FileOutputStream(file);
+						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+
+						// Transfer Exif data
+						ExifInterface newExif = new ExifInterface(imagePath);
+
+						if (oldExif.getAttribute("Orientation") != null) {
+							newExif.setAttribute("Orientation", oldExif.getAttribute("Orientation"));
+						}
+
+						newExif.saveAttributes();
+
+						// Convert re-sized image to base64 string
+						ByteArrayOutputStream finalOutputStream = new ByteArrayOutputStream();
+						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, finalOutputStream);
+						byte[] bs = finalOutputStream.toByteArray();
 						image = Base64.encodeToString(bs, Base64.DEFAULT);
 					} catch (Exception e) {
 						image = "";
+					} finally {
+						if (imagePath != null) {
+							File file = new File(imagePath);
+							file.delete();
+						}
 					}
 				}
-				// // Test code - get image example with binary encoding
-				// Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(),
-				// R.drawable.duck);
-				// String path = Environment.getExternalStorageDirectory().toString();
-				// File file = new File(path, "TestImage.jpg");
-				//
-				// FileOutputStream output = null;
-				// try {
-				// output = new FileOutputStream(file);
-				// } catch (Exception e) {
-				// String ex = e.getMessage();
-				//
-				// }
-				// bitmap.compress(Bitmap.CompressFormat.JPEG, 90, output);
-				// output.close();
 
 				// TODO : delete deliveryId TextBody for Phantom use
 				builder.addTextBody("deliveryId", Long.toString(deliveryId));
@@ -144,7 +167,10 @@ public class PatchDeliveryServiceConnector {
 		protected void onPostExecute(String response) {
 			// Check if Delivery was successfully uploaded to the web service and updated
 			if (response != null) {
-				Toast.makeText(activity, "Delivery updated.", Toast.LENGTH_LONG).show();
+				Toast.makeText(
+						activity,
+						"Delivery updated.\n" + "long : " + longitudeText + ", lat : "
+								+ latitudeText, Toast.LENGTH_LONG).show();
 			} else {
 				Toast.makeText(activity, "Upload failed.", Toast.LENGTH_LONG).show();
 			}

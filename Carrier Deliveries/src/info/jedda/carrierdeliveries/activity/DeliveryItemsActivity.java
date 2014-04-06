@@ -13,8 +13,10 @@ import info.jedda.carrierdeliveries.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
@@ -80,13 +82,15 @@ public class DeliveryItemsActivity extends Activity {
 		}
 
 		lvDeliveryItems.setAdapter(new DeliveryItemsAdapter(this, deliveryItems));
-		
+
 		lvDeliveryItems.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-				boolean isSelected = CarrierDeliveries.getDelivery(deliveryId).getDeliveryItems().get(position).isSelected();
-				CarrierDeliveries.getDelivery(deliveryId).getDeliveryItems().get(position).setSelected(!isSelected);
+				boolean isSelected = CarrierDeliveries.getDelivery(deliveryId).getDeliveryItems()
+						.get(position).isSelected();
+				CarrierDeliveries.getDelivery(deliveryId).getDeliveryItems().get(position)
+						.setSelected(!isSelected);
 				lvDeliveryItems.invalidateViews();
 			}
 		});
@@ -102,29 +106,58 @@ public class DeliveryItemsActivity extends Activity {
 
 	public void clickDeliveryComplete(View v) {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		File imageFile = null;
+		int lastImageId = -1;
 
-		// TODO : Try Catch Blocks
+		try {
+			File storagePath = new File(Environment.getExternalStorageDirectory()
+					+ "/DeliveryPhotos/");
+			storagePath.mkdirs();
+			imageFile = new File(storagePath, deliveryId + ".jpg");
 
-		// TODO : What happens if external storage is full on mobile?
+			// TODO : Change to below after testing (with alternative to concatenation?)
+			// File imageFile = new File(this.getExternalCacheDir().getPath() + deliveryId +
+			// ".jpg");
 
-		// TODO : Application is currently saving in both the '/DeliveryPhotos/'
-		// location AND the
-		// default gallery location. Fix needed.
+			Uri imageUri = Uri.fromFile(imageFile);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
 
-		// TODO : Better ways?
-		File storagePath = new File(Environment.getExternalStorageDirectory() + "/DeliveryPhotos/");
-		storagePath.mkdirs();
+			lastImageId = getMostRecentGalleryImageId();
+		} finally {
 
-		File imageFile = new File(storagePath, deliveryId + ".jpg");
-		Uri imageUri = Uri.fromFile(imageFile);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putString("FilePath", imageFile.getPath());
+			editor.putInt("lastImageId", lastImageId);
+			editor.commit();
 
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = preferences.edit();
-		editor.putString("FilePath", imageFile.getPath());
-		editor.commit();
+			startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+		}
+	}
 
-		startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+	private int getMostRecentGalleryImageId() {
+		final String[] imageColumns = { MediaStore.Images.Media._ID };
+		final String imageOrderBy = MediaStore.Images.Media._ID + " DESC";
+		final String imageWhere = null;
+		final String[] imageArguments = null;
+
+		Cursor imageCursor = managedQuery(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+				imageColumns, imageWhere, imageArguments, imageOrderBy);
+
+		if (imageCursor.moveToFirst()) {
+			int id = imageCursor.getInt(imageCursor.getColumnIndex(MediaStore.Images.Media._ID));
+			stopManagingCursor(imageCursor);
+			imageCursor.close();
+			return id;
+		} else {
+			return 0;
+		}
+	}
+
+	private void deleteGalleryImage(int imageId) {
+		ContentResolver cr = getContentResolver();
+		cr.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, MediaStore.Images.Media._ID + "=?",
+				new String[] { Long.toString(imageId) });
 	}
 
 	@Override
@@ -137,15 +170,30 @@ public class DeliveryItemsActivity extends Activity {
 		boolean gpsSettingsEnabled = locationFinder.isEnabled();
 		locationFinder.stop();
 
-		// TODO : Correct the orientation of the image itself
-
 		String filePath = null;
+		PatchDeliveryServiceConnector serviceConnector;
 
 		switch (resultCode) {
 		case RESULT_OK:
+			// Image capture succeeded
 			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 			filePath = preferences.getString("FilePath", "");
-			break;
+			CarrierDeliveries.getDelivery(deliveryId).setDelivered(true);
+
+			// Delete image from gallery
+			int lastImageId = preferences.getInt("lastImageId", -1);
+
+			if (lastImageId != -1) {
+				int thisImageId = getMostRecentGalleryImageId();
+
+				if (thisImageId > lastImageId) {
+					deleteGalleryImage(thisImageId);
+				}
+			}
+
+			// Patch delivery
+			serviceConnector = new PatchDeliveryServiceConnector(DeliveryItemsActivity.this);
+			serviceConnector.updateDelivery(deliveryId, filePath, gpsSettingsEnabled, location);
 
 		case RESULT_CANCELED:
 			// User cancelled the image capture
@@ -155,18 +203,9 @@ public class DeliveryItemsActivity extends Activity {
 			// Image capture failed - Patch delivery without image
 			CarrierDeliveries.getDelivery(deliveryId).setDelivered(true);
 
-			PatchDeliveryServiceConnector serviceConnector = new PatchDeliveryServiceConnector(
-					DeliveryItemsActivity.this);
+			serviceConnector = new PatchDeliveryServiceConnector(DeliveryItemsActivity.this);
 			serviceConnector.updateDelivery(deliveryId, null, gpsSettingsEnabled, location);
 		}
-
-		// TODO : (What happens when no Internet connection?)
-		CarrierDeliveries.getDelivery(deliveryId).setDelivered(true);
-
-		// Patch Delivery
-		PatchDeliveryServiceConnector serviceConnector = new PatchDeliveryServiceConnector(
-				DeliveryItemsActivity.this);
-		serviceConnector.updateDelivery(deliveryId, filePath, gpsSettingsEnabled, location);
 	}
 
 	@Override
@@ -205,6 +244,8 @@ public class DeliveryItemsActivity extends Activity {
 		if (progress != null) {
 			progress.dismiss();
 		}
+
+		// TODO : Delete the image from the default image folder
 
 		super.onDestroy();
 	}

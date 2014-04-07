@@ -32,6 +32,7 @@ public class PatchDeliveryServiceConnector {
 	private String timeDelivered;
 	private String latitudeText;
 	private String longitudeText;
+	private String orientation;
 	private String imagePath;
 	private long deliveryId;
 
@@ -45,7 +46,7 @@ public class PatchDeliveryServiceConnector {
 			Location location) {
 		this.deliveryId = deliveryId;
 		this.imagePath = imagePath;
-
+		
 		if (!gpsSettingsEnabled) {
 			latitudeText = "disabled";
 			longitudeText = "disabled";
@@ -83,8 +84,7 @@ public class PatchDeliveryServiceConnector {
 				} else {
 					try {
 						Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-						ExifInterface oldExif = new ExifInterface(imagePath);
-
+						
 						// Resize and compress image
 						int initialWidth = bitmap.getWidth();
 						int initialHeight = bitmap.getHeight();
@@ -103,10 +103,13 @@ public class PatchDeliveryServiceConnector {
 						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
 
 						// Transfer Exif data
+						ExifInterface oldExif = new ExifInterface(imagePath);
+						orientation = oldExif.getAttribute("Orientation");
+						
 						ExifInterface newExif = new ExifInterface(imagePath);
-
-						if (oldExif.getAttribute("Orientation") != null) {
-							newExif.setAttribute("Orientation", oldExif.getAttribute("Orientation"));
+						
+						if (orientation != null) {
+							newExif.setAttribute("Orientation",orientation);
 						}
 
 						newExif.saveAttributes();
@@ -132,6 +135,7 @@ public class PatchDeliveryServiceConnector {
 				builder.addTextBody("timeDelivered", timeDelivered);
 				builder.addTextBody("latitude", latitudeText);
 				builder.addTextBody("longitude", longitudeText);
+				builder.addTextBody("orientation", orientation);
 				builder.addTextBody("image", image);
 
 				// builder.addPart("image", new FileBody(file));

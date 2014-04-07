@@ -157,7 +157,7 @@ public class DeliveryItemsActivity extends Activity {
 	private void deleteGalleryImage(int imageId) {
 		ContentResolver cr = getContentResolver();
 		cr.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, MediaStore.Images.Media._ID + "=?",
-				new String[] { Long.toString(imageId) });
+				new String[] { Integer.toString(imageId) });
 	}
 
 	@Override

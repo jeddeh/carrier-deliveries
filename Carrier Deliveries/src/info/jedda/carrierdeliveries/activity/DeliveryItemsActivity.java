@@ -4,7 +4,7 @@ import info.jedda.carrierdeliveries.display.DeliveryItemsAdapter;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.entity.DeliveryItem;
 import info.jedda.carrierdeliveries.service.PatchDeliveryServiceConnector;
-import info.jedda.carrierdeliveries.utility.LocationFinder;
+import info.jedda.carrierdeliveries.utility.DefaultLocationFinder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class DeliveryItemsActivity extends Activity {
 	private TextView tvAddressHeader;
 	private ListView lvDeliveryItems;
 	private Button btnDeliveryComplete;
-	private LocationFinder locationFinder;
+	private DefaultLocationFinder locationFinder;
 	private ProgressDialog progress;
 
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -98,7 +98,7 @@ public class DeliveryItemsActivity extends Activity {
 		// Start GPS tracking
 		if (CarrierDeliveries.getDelivery(deliveryId).isDelivered() == false) {
 			if (locationFinder == null) {
-				locationFinder = new LocationFinder(DeliveryItemsActivity.this);
+				locationFinder = new DefaultLocationFinder(DeliveryItemsActivity.this);
 			}
 			locationFinder.start();
 		}

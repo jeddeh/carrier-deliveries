@@ -2,6 +2,7 @@ package info.jedda.carrierdeliveries.service;
 
 import info.jedda.carrierdeliveries.activity.DeliveryItemsActivity;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
+import info.jedda.carrierdeliveries.utility.ApacheRestClient;
 import info.jedda.carrierdeliveries.utility.RestClient;
 
 import java.io.ByteArrayOutputStream;
@@ -36,7 +37,7 @@ public class PatchDeliveryServiceConnector {
 	private String imagePath;
 	private long deliveryId;
 
-	private static final int IMAGE_LONGEST_SIDE_LENGTH = 200;
+	private static final int IMAGE_LONGEST_SIDE_LENGTH = 400;
 
 	public PatchDeliveryServiceConnector(DeliveryItemsActivity activity) {
 		this.activity = activity;
@@ -142,7 +143,9 @@ public class PatchDeliveryServiceConnector {
 
 				HttpEntity httpEntity = builder.build();
 
-				Header authorizationHeader = RestClient.getAuthorizationHeader(
+				RestClient restClient = ApacheRestClient.getInstance();
+				
+				Header authorizationHeader = restClient.getAuthorizationHeader(
 						CarrierDeliveries.getCarrierRun(), CarrierDeliveries.getDistributorId());
 
 				Header[] headers = { authorizationHeader };
@@ -151,7 +154,7 @@ public class PatchDeliveryServiceConnector {
 				// response = RestClient.doPatch("/api/deliverycompleted/" + deliveryId, httpEntity,
 				// headers);
 
-				response = RestClient.doPatch("/api/deliverycompleted/", httpEntity, headers);
+				response = restClient.doPatch("/api/deliverycompleted/", httpEntity, headers);
 			} catch (Exception e) {
 				// Delivery upload failed...
 				response = null;

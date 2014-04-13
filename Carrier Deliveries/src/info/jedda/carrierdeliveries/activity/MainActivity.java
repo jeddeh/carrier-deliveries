@@ -5,7 +5,7 @@ import java.util.List;
 
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.service.GetDeliveriesServiceConnector;
-import info.jedda.carrierdeliveries.utility.LocationFinder;
+import info.jedda.carrierdeliveries.utility.DefaultLocationFinder;
 
 import info.jedda.carrierdeliveries.R;
 
@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
 
 	private String carrierRun;
 	private SharedPreferences preferences;
-	private LocationFinder locationFinder;
+	private DefaultLocationFinder locationFinder;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
 		etDistributorId.setText("");
 		etCarrierRun.requestFocus();
 
-		locationFinder = new LocationFinder(this);
+		locationFinder = new DefaultLocationFinder(this);
 		if (!locationFinder.isEnabled()) {
 			locationFinder.showSettingsAlert();
 		}
@@ -147,7 +147,7 @@ public class MainActivity extends Activity {
 		progress = new ProgressDialog(this);
 		progress.setTitle("Downloading Deliveries...");
 		progress.setMessage("Please wait.");
-		progress.setCancelable(false);
+		progress.setCancelable(true);
 		progress.isIndeterminate();
 		progress.show();
 	}

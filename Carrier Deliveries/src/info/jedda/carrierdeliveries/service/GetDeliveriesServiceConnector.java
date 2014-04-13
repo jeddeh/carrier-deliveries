@@ -5,6 +5,8 @@ import org.apache.http.message.BasicHeader;
 
 import info.jedda.carrierdeliveries.activity.MainActivity;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
+import info.jedda.carrierdeliveries.utility.ApacheRestClient;
+import info.jedda.carrierdeliveries.utility.DefaultJsonParser;
 import info.jedda.carrierdeliveries.utility.JsonParser;
 import info.jedda.carrierdeliveries.utility.RestClient;
 
@@ -41,12 +43,14 @@ public class GetDeliveriesServiceConnector {
 			String response = null;
 
 			try {
+				RestClient restClient = ApacheRestClient.getInstance();
+
 				Header acceptHeader = new BasicHeader("Accept", "application/json");
-				Header authorizationHeader = RestClient.getAuthorizationHeader(carrierRun,
+				Header authorizationHeader = restClient.getAuthorizationHeader(carrierRun,
 						distributorId);
 
 				Header[] headers = { acceptHeader, authorizationHeader };
-				response = RestClient.doGet("/api/delivery/" + carrierRun, headers);
+				response = restClient.doGet("/api/delivery/" + carrierRun, headers);
 			} catch (Exception e) {
 				// Unable to Get the Deliveries for the carrier run from the web service
 				return null;
@@ -74,7 +78,8 @@ public class GetDeliveriesServiceConnector {
 			CarrierDeliveries.setCarrierRun(carrierRun);
 			CarrierDeliveries.setDistributorId(distributorId);
 			try {
-				JsonParser.createCarrierDeliveries(response);
+				JsonParser parser = DefaultJsonParser.getInstance();
+				parser.createCarrierDeliveries(response);
 				activity.showCarrierRunAddresses();
 			} catch (Exception e) {
 				// Invalid JSON response from server

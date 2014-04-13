@@ -7,7 +7,9 @@ import info.jedda.carrierdeliveries.R;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,6 +44,14 @@ public class DeliveriesActivity extends Activity {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+				SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(DeliveriesActivity.this);
+				boolean isStarted = preferences.getBoolean("isDeliveryRunStarted", false);
+				
+				if (!isStarted) {
+					Toast.makeText(DeliveriesActivity.this, "Please press START from the menu", Toast.LENGTH_LONG).show();
+					return;
+				}
+				
 				Intent intent = new Intent(DeliveriesActivity.this, DeliveryItemsActivity.class);
 				intent.putExtra("deliveryId", CarrierDeliveries.getDeliveries().get(position)
 						.getDeliveryId());
@@ -60,15 +70,24 @@ public class DeliveriesActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor editor = preferences.edit();
+
 		switch (item.getItemId()) {
 		case R.id.start:
+			editor.putBoolean("isDeliveryRunStarted", true);
+			editor.commit();
+			
 			Toast.makeText(this, "Delivery run started.", Toast.LENGTH_LONG).show();
 			return true;
 
 		case R.id.finish:
+			editor.putBoolean("isDeliveryRunStarted", false);
+			editor.commit();
+
 			Toast.makeText(this, "Delivery run finished.", Toast.LENGTH_LONG).show();
 			return true;
-			
+
 		default:
 			return super.onOptionsItemSelected(item);
 		}

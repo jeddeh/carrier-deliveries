@@ -5,7 +5,7 @@ import java.util.List;
 
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.service.GetDeliveriesServiceConnector;
-import info.jedda.carrierdeliveries.utility.DefaultLocationFinder;
+import info.jedda.carrierdeliveries.utility.implementation.DefaultLocationFinder;
 
 import info.jedda.carrierdeliveries.R;
 

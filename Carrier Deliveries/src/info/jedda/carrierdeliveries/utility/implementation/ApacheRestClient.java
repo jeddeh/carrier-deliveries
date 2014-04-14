@@ -1,5 +1,7 @@
-package info.jedda.carrierdeliveries.utility;
+package info.jedda.carrierdeliveries.utility.implementation;
 
+
+import info.jedda.carrierdeliveries.utility.RestClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;

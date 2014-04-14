@@ -5,10 +5,10 @@ import org.apache.http.message.BasicHeader;
 
 import info.jedda.carrierdeliveries.activity.MainActivity;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
-import info.jedda.carrierdeliveries.utility.ApacheRestClient;
-import info.jedda.carrierdeliveries.utility.DefaultJsonParser;
 import info.jedda.carrierdeliveries.utility.JsonParser;
 import info.jedda.carrierdeliveries.utility.RestClient;
+import info.jedda.carrierdeliveries.utility.implementation.ApacheRestClient;
+import info.jedda.carrierdeliveries.utility.implementation.DefaultJsonParser;
 
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -17,6 +17,10 @@ import android.widget.Toast;
  * Class responsible for downloading from the web service all the deliveries and delivery items for
  * a particular Carrier Run.
  */
+
+// TODO : This package is too specialized. Consider abstracting away generic web service calls and
+// moving specifics of service calls to a controller package. Reuse potential? Worth the effort?
+// Look into Dagger?
 public class GetDeliveriesServiceConnector {
 
 	private String carrierRun;

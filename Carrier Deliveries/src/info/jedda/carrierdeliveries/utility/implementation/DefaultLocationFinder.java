@@ -1,5 +1,6 @@
-package info.jedda.carrierdeliveries.utility;
+package info.jedda.carrierdeliveries.utility.implementation;
 
+import info.jedda.carrierdeliveries.utility.LocationFinder;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;

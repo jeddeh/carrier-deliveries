@@ -2,8 +2,8 @@ package info.jedda.carrierdeliveries.service;
 
 import info.jedda.carrierdeliveries.activity.DeliveryItemsActivity;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
-import info.jedda.carrierdeliveries.utility.ApacheRestClient;
 import info.jedda.carrierdeliveries.utility.RestClient;
+import info.jedda.carrierdeliveries.utility.implementation.ApacheRestClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -104,6 +104,7 @@ public class PatchDeliveryServiceConnector {
 						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
 
 						// Transfer Exif data
+						// TODO : Look into using Sanselean (sp?) library. URL? 
 						ExifInterface oldExif = new ExifInterface(imagePath);
 						orientation = oldExif.getAttribute("Orientation");
 						
@@ -150,7 +151,7 @@ public class PatchDeliveryServiceConnector {
 
 				Header[] headers = { authorizationHeader };
 
-				// TODO : change to the below for Phantom use
+				// TODO : web service should accept deliveryId in URL
 				// response = RestClient.doPatch("/api/deliverycompleted/" + deliveryId, httpEntity,
 				// headers);
 
@@ -181,9 +182,6 @@ public class PatchDeliveryServiceConnector {
 			} else {
 				Toast.makeText(activity, "Upload failed.", Toast.LENGTH_LONG).show();
 			}
-
-			// File file = new File(imagePath);
-			// file.delete();
 		}
 	}
 }

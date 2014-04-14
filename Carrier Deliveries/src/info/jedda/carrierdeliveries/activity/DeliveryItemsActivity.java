@@ -4,7 +4,7 @@ import info.jedda.carrierdeliveries.display.DeliveryItemsAdapter;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.entity.DeliveryItem;
 import info.jedda.carrierdeliveries.service.PatchDeliveryServiceConnector;
-import info.jedda.carrierdeliveries.utility.DefaultLocationFinder;
+import info.jedda.carrierdeliveries.utility.implementation.DefaultLocationFinder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -115,10 +115,6 @@ public class DeliveryItemsActivity extends Activity {
 			storagePath.mkdirs();
 			imageFile = new File(storagePath, deliveryId + ".jpg");
 
-			// TODO : Change to below without concatenation after testing
-			// File imageFile = new File(this.getExternalCacheDir().getPath() + deliveryId +
-			// ".jpg");
-
 			Uri imageUri = Uri.fromFile(imageFile);
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
 
@@ -141,7 +137,7 @@ public class DeliveryItemsActivity extends Activity {
 		final String imageWhere = null;
 		final String[] imageArguments = null;
 
-		// TODO : Replace deprecated methods
+		// TODO : Replace deprecated method hack
 		Cursor imageCursor = managedQuery(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
 				imageColumns, imageWhere, imageArguments, imageOrderBy);
 

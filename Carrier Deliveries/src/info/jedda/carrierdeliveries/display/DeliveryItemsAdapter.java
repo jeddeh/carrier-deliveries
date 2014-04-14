@@ -18,9 +18,6 @@ import android.widget.TextView;
  */
 public class DeliveryItemsAdapter extends BaseAdapter {
 
-	// TODO : Considering implementing means for the user to mark off individual Delivery Items as
-	//  they are completed. Maybe toggle greying out the items as clicked?
-
 	private LayoutInflater layoutInflater;
 	ArrayList<DeliveryItem> deliveryItems;
 
@@ -71,25 +68,22 @@ public class DeliveryItemsAdapter extends BaseAdapter {
 			holder.tvBreakdown.setText("Unknown Bundle Size");
 		} else {
 			StringBuilder sb = new StringBuilder();
-			sb.append(bundles)
-				.append(bundles == 1 ? " Bundle, " : " Bundles, ")
-				.append(items)
-				.append(items == 1 ? " Item @ " : " Items @ ")
-				.append(bundleSize)
-				.append("/Bundle");
+			sb.append(bundles).append(bundles == 1 ? " Bundle, " : " Bundles, ").append(items)
+					.append(items == 1 ? " Item @ " : " Items @ ").append(bundleSize)
+					.append("/Bundle");
 
 			holder.tvBreakdown.setText(sb);
 		}
 
 		holder.tvQuantity.setText(Integer.toString(deliveryItems.get(position).getQuantity())
 				+ " Total");
-		
+
 		// Grey out the delivery on the ListView if completed.
-        if (deliveryItems.get(position).isSelected() == false) {
-        	convertView.setBackgroundResource(R.drawable.selector_unselected);
-        } else {
-        	convertView.setBackgroundResource(R.drawable.selector_selected);
-        }
+		if (deliveryItems.get(position).isSelected() == false) {
+			convertView.setBackgroundResource(R.drawable.selector_unselected);
+		} else {
+			convertView.setBackgroundResource(R.drawable.selector_selected);
+		}
 
 		return convertView;
 	}

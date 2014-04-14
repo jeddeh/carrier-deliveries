@@ -48,7 +48,7 @@ public class DeliveriesActivity extends Activity {
 				boolean isStarted = preferences.getBoolean("isDeliveryRunStarted", false);
 				
 				if (!isStarted) {
-					Toast.makeText(DeliveriesActivity.this, "Please press START from the menu", Toast.LENGTH_LONG).show();
+					Toast.makeText(DeliveriesActivity.this, "Please press START from the menu.\nPress FINISH when the delivery run is complete.", Toast.LENGTH_LONG).show();
 					return;
 				}
 				

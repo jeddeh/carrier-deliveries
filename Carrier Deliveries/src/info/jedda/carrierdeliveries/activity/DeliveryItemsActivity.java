@@ -115,7 +115,7 @@ public class DeliveryItemsActivity extends Activity {
 			storagePath.mkdirs();
 			imageFile = new File(storagePath, deliveryId + ".jpg");
 
-			// TODO : Change to below after testing (with alternative to concatenation?)
+			// TODO : Change to below without concatenation after testing
 			// File imageFile = new File(this.getExternalCacheDir().getPath() + deliveryId +
 			// ".jpg");
 
@@ -141,6 +141,7 @@ public class DeliveryItemsActivity extends Activity {
 		final String imageWhere = null;
 		final String[] imageArguments = null;
 
+		// TODO : Replace deprecated methods
 		Cursor imageCursor = managedQuery(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
 				imageColumns, imageWhere, imageArguments, imageOrderBy);
 
@@ -244,8 +245,6 @@ public class DeliveryItemsActivity extends Activity {
 		if (progress != null) {
 			progress.dismiss();
 		}
-
-		// TODO : Delete the image from the default image folder
 
 		super.onDestroy();
 	}

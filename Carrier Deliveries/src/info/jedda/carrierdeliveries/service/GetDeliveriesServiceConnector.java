@@ -19,7 +19,7 @@ import android.widget.Toast;
  */
 
 // TODO : This package is too specialized. Consider abstracting away generic web service calls and
-// moving specifics of service calls to a controller package. Reuse potential? Worth the effort?
+// moving specifics of service calls to a separate package. Reuse potential? Worth the effort?
 // Look into Dagger?
 public class GetDeliveriesServiceConnector {
 

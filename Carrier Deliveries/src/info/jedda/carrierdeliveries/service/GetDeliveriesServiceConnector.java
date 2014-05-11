@@ -26,9 +26,11 @@ public class GetDeliveriesServiceConnector {
 	private String carrierRun;
 	private String distributorId;
 	private MainActivity activity;
+	private RestClient restClient;
 
-	public GetDeliveriesServiceConnector(MainActivity activity) {
+	public GetDeliveriesServiceConnector(MainActivity activity, RestClient restClient) {
 		this.activity = activity;
+		this.restClient = restClient;
 	}
 
 	public void getDeliveries(String carrierRun, String distributorId) {
@@ -47,8 +49,6 @@ public class GetDeliveriesServiceConnector {
 			String response = null;
 
 			try {
-				RestClient restClient = ApacheRestClient.getInstance();
-
 				Header acceptHeader = new BasicHeader("Accept", "application/json");
 				Header authorizationHeader = restClient.getAuthorizationHeader(carrierRun,
 						distributorId);

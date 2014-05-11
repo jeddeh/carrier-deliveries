@@ -1,9 +1,11 @@
 package info.jedda.carrierdeliveries.activity;
 
-import info.jedda.carrierdeliveries.display.DeliveryItemsAdapter;
+import info.jedda.carrierdeliveries.activity.display.DeliveryItemsAdapter;
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.entity.DeliveryItem;
 import info.jedda.carrierdeliveries.service.PatchDeliveryServiceConnector;
+import info.jedda.carrierdeliveries.utility.RestClient;
+import info.jedda.carrierdeliveries.utility.implementation.ApacheRestClient;
 import info.jedda.carrierdeliveries.utility.implementation.DefaultLocationFinder;
 
 import java.io.File;
@@ -169,6 +171,7 @@ public class DeliveryItemsActivity extends Activity {
 
 		String filePath = null;
 		PatchDeliveryServiceConnector serviceConnector;
+		RestClient restClient;
 
 		switch (resultCode) {
 		case RESULT_OK:
@@ -189,7 +192,9 @@ public class DeliveryItemsActivity extends Activity {
 			}
 
 			// Patch delivery
-			serviceConnector = new PatchDeliveryServiceConnector(DeliveryItemsActivity.this);
+			restClient = ApacheRestClient.getInstance();
+			
+			serviceConnector = new PatchDeliveryServiceConnector(DeliveryItemsActivity.this, restClient);
 			serviceConnector.updateDelivery(deliveryId, filePath, gpsSettingsEnabled, location);
 
 		case RESULT_CANCELED:
@@ -200,7 +205,9 @@ public class DeliveryItemsActivity extends Activity {
 			// Image capture failed - Patch delivery without image
 			CarrierDeliveries.getDelivery(deliveryId).setDelivered(true);
 
-			serviceConnector = new PatchDeliveryServiceConnector(DeliveryItemsActivity.this);
+			restClient = ApacheRestClient.getInstance();
+			
+			serviceConnector = new PatchDeliveryServiceConnector(DeliveryItemsActivity.this, restClient);
 			serviceConnector.updateDelivery(deliveryId, null, gpsSettingsEnabled, location);
 		}
 	}

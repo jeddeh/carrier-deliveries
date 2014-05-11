@@ -5,6 +5,8 @@ import java.util.List;
 
 import info.jedda.carrierdeliveries.entity.CarrierDeliveries;
 import info.jedda.carrierdeliveries.service.GetDeliveriesServiceConnector;
+import info.jedda.carrierdeliveries.utility.RestClient;
+import info.jedda.carrierdeliveries.utility.implementation.ApacheRestClient;
 import info.jedda.carrierdeliveries.utility.implementation.DefaultLocationFinder;
 
 import info.jedda.carrierdeliveries.R;
@@ -120,8 +122,11 @@ public class MainActivity extends Activity {
 		}
 
 		try {
+			RestClient restClient = ApacheRestClient.getInstance();
+
 			GetDeliveriesServiceConnector serviceConnector = new GetDeliveriesServiceConnector(
-					MainActivity.this);
+					MainActivity.this, restClient);
+
 			serviceConnector.getDeliveries(carrierRun, distributorId);
 		} catch (Exception e) {
 			Toast.makeText(this, "Unable to load deliveries for Run " + carrierRun,

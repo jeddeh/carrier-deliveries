@@ -36,11 +36,13 @@ public class PatchDeliveryServiceConnector {
 	private String orientation;
 	private String imagePath;
 	private long deliveryId;
+	private RestClient restClient;
 
 	private static final int IMAGE_LONGEST_SIDE_LENGTH = 400;
 
-	public PatchDeliveryServiceConnector(DeliveryItemsActivity activity) {
+	public PatchDeliveryServiceConnector(DeliveryItemsActivity activity, RestClient restClient) {
 		this.activity = activity;
+		this.restClient = restClient;
 	}
 
 	public void updateDelivery(long deliveryId, String imagePath, boolean gpsSettingsEnabled,
@@ -143,8 +145,6 @@ public class PatchDeliveryServiceConnector {
 				// builder.addPart("image", new FileBody(file));
 
 				HttpEntity httpEntity = builder.build();
-
-				RestClient restClient = ApacheRestClient.getInstance();
 				
 				Header authorizationHeader = restClient.getAuthorizationHeader(
 						CarrierDeliveries.getCarrierRun(), CarrierDeliveries.getDistributorId());

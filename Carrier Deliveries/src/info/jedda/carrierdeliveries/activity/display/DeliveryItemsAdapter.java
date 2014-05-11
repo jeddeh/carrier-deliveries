@@ -1,4 +1,4 @@
-package info.jedda.carrierdeliveries.display;
+package info.jedda.carrierdeliveries.activity.display;
 
 import info.jedda.carrierdeliveries.entity.DeliveryItem;
 
